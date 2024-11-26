@@ -1,9 +1,8 @@
-import { fromEvent } from "rxjs";
-import { map, pluck } from "rxjs/operators";
+import { fromEvent, interval } from "rxjs";
+import { switchMap } from "rxjs/operators";
 
 const button = document.getElementById("btn");
 
 fromEvent(button, "click")
-  // .pipe(map((event) => event.target))
-  .pipe(pluck("target")) // pluck将在V8中被弃用，使用map代替
+  .pipe(switchMap((event) => interval(1000))) // 将原本是event事件对象转换为了一个interval的可观察者对象。再次点击的时候会抛弃上一次的事件流，从0开始重新发送。
   .subscribe(console.log);
