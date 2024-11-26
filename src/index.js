@@ -4,10 +4,12 @@ import { Observable } from "rxjs";
 // 创建可观察者对象
 const observable = new Observable((subscriber) => {
   // 产生数据
-  setTimeout(() => {
-    subscriber.next({
-      name: '张三',
-    });
+  let index = 0;
+  setInterval(() => {
+    subscriber.next(index++);
+    if (index === 5) {
+      subscriber.complete();
+    }
   }, 1000);
 });
 
@@ -15,6 +17,9 @@ const observable = new Observable((subscriber) => {
 const observer = {
   next: (value) => {
     console.log(value);
+  },
+  complete: () => {
+    console.log("终止了");
   },
 }
 
