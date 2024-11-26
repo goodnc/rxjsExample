@@ -1,15 +1,8 @@
-import { fromEvent, range } from "rxjs";
-import { take, takeWhile, takeUntil } from "rxjs/operators";
+import { fromEvent } from "rxjs";
+import { debounceTime, throttleTime } from "rxjs/operators";
 
-// range(1, 10)
-// .pipe(take(5)) // Take only the first 5 numbers
+// 节流，可观察者对象高频次向外部发出数据流，通过throttleTime来限制在规定的时间内只向订阅者传递一次数据流
+// fromEvent(document, "click").pipe(throttleTime(2000)).subscribe(console.log);
 
-// .pipe(takeWhile((n) => n < 3))
-// .subscribe(console.log);
-
-const button = document.getElementById("btn");
-
-// 在document区域里移动鼠标，会源源不断地发出数据流，当点击按钮后，数据流就会停止
-fromEvent(document, "mousemove")
-  .pipe(takeUntil(fromEvent(button, "click")))
-  .subscribe(console.log);
+// 防抖，触发高频事件，只响应最后一次
+fromEvent(document, "click").pipe(debounceTime(2000)).subscribe(console.log);
