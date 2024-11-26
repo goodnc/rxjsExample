@@ -1,20 +1,9 @@
-import { ReplaySubject } from "rxjs";
+import { range } from "rxjs";
+import { map } from "rxjs/operators";
 
-// 创建一个 ReplaySubject
-// 功能类似Subject，但有新订阅者时两者处理方式不同，Subject不会广播历史结果，而ReplaySubject会广播所有历史结果
-const replaySubject = new ReplaySubject();
+// 数据流：从可观察者对象内部输出的数据就是数据流，可观察者对象内部可以源源不断地向外部输出数据。
+// 操作符：用于操作数据流，可以对数据流进行转换、过滤等等操作。
 
-replaySubject.subscribe((value) => {
-    console.log(value);
-});
-
-replaySubject.next('Hello one');
-replaySubject.next('Hello two');
-
-setTimeout(() => {
-    replaySubject.subscribe({
-      next: (value) => {
-        console.log(value);
-      }
-    });
-}, 2000);
+range(1, 5)
+  .pipe(map((n) => n * 10)) // map：对数据流进行转换
+  .subscribe((value) => console.log(value)); // 默认是调用next方法
