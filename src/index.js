@@ -11,10 +11,12 @@ const observable = new Observable((subscriber) => {
   }, 1000);
 });
 
+// 创建观察者
 const observer = {
   next: (value) => {
     console.log(value);
   },
 }
 
+// 订阅
 observable.subscribe(observer)
