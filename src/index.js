@@ -1,13 +1,20 @@
-import { BehaviorSubject } from "rxjs";
+import { ReplaySubject } from "rxjs";
 
-// BehaviorSubject 拥有Subject的所有功能，但是在创建可观察者对象时可以传入一个默认值，观察者订阅后可以直接拿到默认值。
-// Subject 被订阅后不是被立即执行，而BehaviorSubject 被订阅后会被立即执行。
-const behaviorSubject = new BehaviorSubject('Default Behavior');
+// 创建一个 ReplaySubject
+// 功能类似Subject，但有新订阅者时两者处理方式不同，Subject不会广播历史结果，而ReplaySubject会广播所有历史结果
+const replaySubject = new ReplaySubject();
 
-behaviorSubject.subscribe({
-  next: (value) => {
-    console.log(value)
-  }
-})
+replaySubject.subscribe((value) => {
+    console.log(value);
+});
 
-behaviorSubject.next('Hello Behavior');
+replaySubject.next('Hello one');
+replaySubject.next('Hello two');
+
+setTimeout(() => {
+    replaySubject.subscribe({
+      next: (value) => {
+        console.log(value);
+      }
+    });
+}, 2000);
