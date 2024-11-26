@@ -1,8 +1,10 @@
-import { fromEvent } from "rxjs";
-import { debounceTime, throttleTime } from "rxjs/operators";
+import { of } from "rxjs";
+import { distinctUntilChanged } from "rxjs/operators";
 
-// 节流，可观察者对象高频次向外部发出数据流，通过throttleTime来限制在规定的时间内只向订阅者传递一次数据流
-// fromEvent(document, "click").pipe(throttleTime(2000)).subscribe(console.log);
+// of：将参数列表作为数据流返回
+of("a", 2, true, [], {}).subscribe((v) => console.log(v));
 
-// 防抖，触发高频事件，只响应最后一次
-fromEvent(document, "click").pipe(debounceTime(2000)).subscribe(console.log);
+// distinctUntilChanged：检测数据源当前发出的数据流是否和上次发出的相同，相同则跳过，不同则发出。
+of(1, 1, 2, 3, 3, 3, 4, 4, 5, 6)
+  .pipe(distinctUntilChanged())
+  .subscribe((v) => console.log(v));
