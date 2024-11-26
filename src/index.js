@@ -1,15 +1,16 @@
-// console.log('hello world');
-import { Observable } from "rxjs";
+import { Subject } from "rxjs";
 
-// 创建可观察者对象
-// 可观察者对象是惰性的，只有被订阅了才可以被执行
-const observable = new Observable(() => {
-    console.log('Hello RxJS');
+// Subject 用于创建一个空的可观察者对象，在订阅后不会立即执行，next方法可以在可观察者对象外部调用。
+const subject = new Subject();
+
+subject.subscribe({
+  next: (value) => console.log(value),
 });
 
-// 订阅
-observable.subscribe()
-// 可观察者对象可以被多次订阅，每被订阅一次，就会执行一次
-observable.subscribe()
-observable.subscribe()
-observable.subscribe()
+subject.subscribe({
+  next: (value) => console.log(value),
+});
+
+setTimeout(
+  () => subject.next('Hello Subject')
+, 1000);
