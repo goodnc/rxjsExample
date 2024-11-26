@@ -1,11 +1,9 @@
-import axios from "axios";
-import { from, forkJoin } from "rxjs";
+import { fromEvent } from "rxjs";
+import { map, pluck } from "rxjs/operators";
 
-// axios拦截器
-axios.interceptors.response.use((res) => res.data);
+const button = document.getElementById("btn");
 
-// 使用forkJoin并发请求，rx版的promise.all
-forkJoin({
-  users: from(axios.get("https://jsonplaceholder.typicode.com/users")),
-  posts: from(axios.get("https://jsonplaceholder.typicode.com/posts")),
-}).subscribe(console.log);
+fromEvent(button, "click")
+  // .pipe(map((event) => event.target))
+  .pipe(pluck("target")) // pluck将在V8中被弃用，使用map代替
+  .subscribe(console.log);
