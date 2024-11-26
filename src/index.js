@@ -1,15 +1,11 @@
-import { from } from "rxjs";
+import axios from "axios";
+import { from, forkJoin } from "rxjs";
 
-from(["a", "b", "c", "d"]).subscribe(console.log);
+// axios拦截器
+axios.interceptors.response.use((res) => res.data);
 
-// 定义一个promise方法，返回一个promise对象
-function p() {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({ a: 1, b: 2, c: 3 });
-    }, 2000);
-  });
-}
-
-// 将promise对象转换为observable对象并订阅
-from(p()).subscribe(console.log);
+// 使用forkJoin并发请求，rx版的promise.all
+forkJoin({
+  users: from(axios.get("https://jsonplaceholder.typicode.com/users")),
+  posts: from(axios.get("https://jsonplaceholder.typicode.com/posts")),
+}).subscribe(console.log);
