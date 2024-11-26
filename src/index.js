@@ -1,9 +1,15 @@
-import { range } from "rxjs";
-import { map } from "rxjs/operators";
+import { from } from "rxjs";
 
-// 数据流：从可观察者对象内部输出的数据就是数据流，可观察者对象内部可以源源不断地向外部输出数据。
-// 操作符：用于操作数据流，可以对数据流进行转换、过滤等等操作。
+from(["a", "b", "c", "d"]).subscribe(console.log);
 
-range(1, 5)
-  .pipe(map((n) => n * 10)) // map：对数据流进行转换
-  .subscribe((value) => console.log(value)); // 默认是调用next方法
+// 定义一个promise方法，返回一个promise对象
+function p() {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({ a: 1, b: 2, c: 3 });
+    }, 2000);
+  });
+}
+
+// 将promise对象转换为observable对象并订阅
+from(p()).subscribe(console.log);
