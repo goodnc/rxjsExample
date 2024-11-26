@@ -5,10 +5,11 @@ import { Observable } from "rxjs";
 const observable = new Observable((subscriber) => {
   // 产生数据
   let index = 0;
-  setInterval(() => {
+  let timer = setInterval(() => {
     subscriber.next(index++);
     if (index === 5) {
-      subscriber.complete();
+      // subscriber.complete();
+      subscriber.error("出错了");
     }
   }, 1000);
 });
@@ -21,6 +22,9 @@ const observer = {
   complete: () => {
     console.log("终止了");
   },
+  error: (error) => {
+    console.log(error);
+  }
 }
 
 // 订阅
