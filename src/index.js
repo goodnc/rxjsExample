@@ -1,46 +1,24 @@
-import { fromEvent } from "rxjs";
-import { map, switchMap, takeUntil } from "rxjs/operators";
+import { fromEvent, from } from "rxjs";
+import {
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  pluck,
+  switchMap,
+} from "rxjs/operators";
+import axios from "axios";
 
-const box = document.getElementById("box");
+const search = document.getElementById("search");
 
-// 1. 通过fromEvent添加鼠标按下事件
-// 2. 当事件被触发时，可以拿到这个事件对象，从而拿到鼠标的位置信息
-fromEvent(box, "mousedown")
+fromEvent(search, "keyup") // 监听到keyup事件转换为事件流
   .pipe(
-    map((event) => ({
-      distanceX: event.clientX - event.target.offsetLeft,
-      distanceY: event.clientY - event.target.offsetTop,
-    })),
-    // 3. 通过switchMap切换到鼠标移动事件
-    // 解构获得distanceX，distanceY的信息
-    switchMap(({ distanceX, distanceY }) =>
-      // 4. 当鼠标移动时，通过map拿到鼠标的位置信息
-      // 5. 当鼠标抬起时，通过takeUntil操作符取消订阅
-      fromEvent(document, "mousemove").pipe(
-        map((event) => ({
-          left: event.clientX - distanceX,
-          top: event.clientY - distanceY,
-        })),
-        takeUntil(fromEvent(box, "mouseup"))
-      )
+    debounceTime(1000), // 防抖，1秒内输入的关键词不调用接口
+    map((event) => event.target.value),
+    distinctUntilChanged(), // 如果两次关键词一样相同，就不重新调用接口
+    switchMap((keyword) =>
+      from(
+        axios.get(`https://jsonplaceholder.typicode.com/posts?q=${keyword}`)
+      ).pipe(pluck("data"))
     )
   )
-  // 6. 把位置信息给订阅者，从而实现拖拽效果
-  .subscribe(({ left, top }) => {
-    box.style.left = left + "px";
-    box.style.top = top + "px";
-  });
-
-// box.onmousedown = (event) => {
-//   let distanceX = event.clientX - event.target.offsetLeft;
-//   let distanceY = event.clientY - event.target.offsetTop;
-//   document.onmousemove = (event) => {
-//     let left = event.clientX - distanceX;
-//     let top = event.clientY - distanceY;
-//     box.style.left = left + "px";
-//     box.style.top = top + "px";
-//   };
-//   box.onmouseup = () => {
-//     document.onmousemove = null;
-//   };
-// };
+  .subscribe(console.log);
