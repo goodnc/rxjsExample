@@ -1,24 +1,18 @@
 import { fromEvent, from } from "rxjs";
-import {
-  debounceTime,
-  distinctUntilChanged,
-  map,
-  pluck,
-  switchMap,
-} from "rxjs/operators";
+import { pluck, concatMap } from "rxjs/operators";
 import axios from "axios";
 
-const search = document.getElementById("search");
+const btn = document.getElementById("btn");
 
-fromEvent(search, "keyup") // 监听到keyup事件转换为事件流
+fromEvent(btn, "click")
   .pipe(
-    debounceTime(1000), // 防抖，1秒内输入的关键词不调用接口
-    map((event) => event.target.value),
-    distinctUntilChanged(), // 如果两次关键词一样相同，就不重新调用接口
-    switchMap((keyword) =>
-      from(
-        axios.get(`https://jsonplaceholder.typicode.com/posts?q=${keyword}`)
-      ).pipe(pluck("data"))
+    concatMap((event) =>
+      from(axios.get("http://localhost:3000/token")).pipe(
+        pluck("data", "token")
+      )
+    ),
+    concatMap((token) =>
+      from(axios.get("http://localhost:3000/userInfo")).pipe(pluck("data"))
     )
   )
   .subscribe(console.log);
